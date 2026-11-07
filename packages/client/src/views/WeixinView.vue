@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 微信会话（只读）：读 Hermes state.db 里 source=weixin 的会话。
-// 消「微信与 areco 割裂」的看得见那一半——此前微信侧能派活给 areco，
+// 消「微信与 audicode 割裂」的看得见那一半——此前微信侧能派活给 audicode，
 // 反过来在座舱里看不到微信在聊什么、派活的上下文是什么。
 // 无侧栏（2026-08-04 高律师定「点微信直接就显示会话」）：微信那些「会话」不是不同的对话——
 // 一个微信号 = 一个 profile = 一个 agent，它们只是同一段对话被 session_reset 切开的时间片，
@@ -29,7 +29,7 @@ interface WeixinListPage {
   total: number
   hasMore: boolean
 }
-/** 服务端 transcript 的 part（与 areco 原生 TranscriptMessage.parts 同形） */
+/** 服务端 transcript 的 part（与 audicode 原生 TranscriptMessage.parts 同形） */
 interface WxPart {
   kind: 'text' | 'tool_use' | 'tool_result'
   text?: string

@@ -457,7 +457,7 @@ test("enqueue echoes the prompt immediately even while a previous turn is runnin
   adapter.runPrompt = async () => { await firstGate; };
   const first = adapter.enqueue("第一条");
   const second = adapter.enqueue("第二条");   // 第一条未完成时入队
-  // areco nonce 回显判据：第二条的回显必须此刻已可见，不得等队列轮转
+  // audicode nonce 回显判据：第二条的回显必须此刻已可见，不得等队列轮转
   assert.ok(output.join("").includes("> 第二条"));
   releaseFirst();
   await Promise.all([first, second]);

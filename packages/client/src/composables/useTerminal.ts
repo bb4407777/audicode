@@ -399,7 +399,7 @@ export function useTerminal(sessionId: string) {
   const RIS = '\x1bc'
 
   // pi-mono 系 TUI 在 resize 重绘时会发 CSI 3 J 清除 scrollback。对真实 PTY 这是合理的，
-  // 但 Areco 把终端历史作为会话记录保留；让 3J 进入 xterm 会同步把 viewport 钳到 0，
+  // 但 Audicode 把终端历史作为会话记录保留；让 3J 进入 xterm 会同步把 viewport 钳到 0，
   // 造成「跳到会话开头再拉回」。只移除 3J，保留同批次的 2J + H 当前屏清理/重绘。
   function preserveScrollback(data: string) {
     return data.replaceAll('\x1b[3J', '')

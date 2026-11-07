@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-dispatch-'))
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-dispatch-'))
 process.env.ARECO_ROOT = root
 
 const { RoomRelay } = await import('./room-relay')

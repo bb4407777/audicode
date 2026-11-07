@@ -1,4 +1,4 @@
-# areco 调试记录（debug.md）
+# audicode 调试记录（debug.md）
 
 > 排查过程与踩坑实录，按时间线。修复交付档见 `data/handoff/`，本文件记「怎么 debug 的」，
 > 后人遇同类故障可照此复盘，不必从零摸索。
@@ -30,7 +30,7 @@
 - 多次 `curl /api/sessions/<id>/transcript` 都报 `messages=0`，据此断定会话空白。
 - **错**：返回是 `{ok: true, data: <TranscriptPage>}` 包裹，真内容在 `data` 里。我一直读外层
   `d.get('messages')`，永远 0。拆壳后 2579f70e 实为 80 条、b85b8b53 为 80 条——**早就恢复了**。
-- **教训**：areco API 统一 `{ok, data}` 外壳（见 `ok()` helper），调试时务必拆 `data`。
+- **教训**：audicode API 统一 `{ok, data}` 外壳（见 `ok()` helper），调试时务必拆 `data`。
 
 **真根因 · KIMI 双绑 + 占用闸 + locateCache 清空**
 - server.log 旧进程段（11:56/11:58，**注意 UTC，= 北京 19:56/19:58**）：
@@ -69,10 +69,10 @@ kimi -S session_<新uuid>  →  error: failed to start shell: Session "..." not 
 
 ### 调试踩坑清单（后人照此避坑）
 
-1. **API 外壳**：areco 所有 controller 返回 `{ok, data}`，调试 curl 必须拆 `data` 才看到真实 page。
+1. **API 外壳**：audicode 所有 controller 返回 `{ok, data}`，调试 curl 必须拆 `data` 才看到真实 page。
 2. **server.log 时区是 UTC**：日志里 `12:41` = 北京 `20:41`。对照进程启动时间（`ps lstart` 本地时）要 +8h 换算。
 3. **8790 跑 `dist/server/index.cjs` bundle，不是 src**：改完 src 必须 `node scripts/build-server.mjs`
-   重建 dist + restart 8790 才生效；src 改动 restart 不生效（除非跑 tsx 模式，areco 不是）。
+   重建 dist + restart 8790 才生效；src 改动 restart 不生效（除非跑 tsx 模式，audicode 不是）。
    `build-server.mjs` 不跑 typecheck，但 `npm run build` 的 typecheck 会卡 `*.test.ts` 的 lint。
 4. **`dropAgentTranscriptCache(sessionId)`**：清 `parseCache` + `locateCache` 两层。手动解绑会话后
    必须调它，否则 `locateCache` 还指旧文件。
@@ -85,6 +85,6 @@ kimi -S session_<新uuid>  →  error: failed to start shell: Session "..." not 
    一起进 dist。restart 前 `git status` 确认 WIP，或 stash 后 rebuild 干净 dist。
 9. **`timeout`/`gtimeout` 在 macOS 默认没有**：实测交互 CLI 用 `perl -e 'alarm N; ...'` 或
    background + sleep + kill。
-10. **会话 id 前缀查日志**：areco session.id（uuid）≠ agent 的原生文件 id。日志里 `[locate] <前缀>`
-    是 areco id；原生文件名（codebuddy `<uuid>.jsonl`、kimi `session_<uuid>/wire.jsonl`）是 agent 自己的 id，
+10. **会话 id 前缀查日志**：audicode session.id（uuid）≠ agent 的原生文件 id。日志里 `[locate] <前缀>`
+    是 audicode id；原生文件名（codebuddy `<uuid>.jsonl`、kimi `session_<uuid>/wire.jsonl`）是 agent 自己的 id，
     两者靠 locate 绑定关联，别混。

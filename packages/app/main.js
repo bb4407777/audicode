@@ -1,12 +1,12 @@
-// areco 桌面壳主进程：一个窗口加载 areco server，连不上时显示重试页
+// audicode 桌面壳主进程：一个窗口加载 audicode server，连不上时显示重试页
 const { app, BrowserWindow, shell, Menu } = require('electron')
 const { join } = require('path')
 
 const ARECO_URL = (process.env.ARECO_URL || 'http://127.0.0.1:8790').replace(/\/+$/, '')
 const iconPath = join(__dirname, 'build', 'icon.png')
 
-// hiddenInset 红绿灯直接浮在内容区左上角。壳里注入 CSS：在 areco 顶栏上方
-// 垫一条 32px 的「红绿灯栏」（带下边框作隔断，可拖动窗口），areco 顶栏保持原样靠左；
+// hiddenInset 红绿灯直接浮在内容区左上角。壳里注入 CSS：在 audicode 顶栏上方
+// 垫一条 32px 的「红绿灯栏」（带下边框作隔断，可拖动窗口），audicode 顶栏保持原样靠左；
 // 顶栏本身也作为拖动区（链接/按钮保持可点）
 const SHELL_CSS = `
   .app-shell::before {
@@ -32,7 +32,7 @@ function createWindow() {
     show: false,
     autoHideMenuBar: true,
     icon: iconPath,
-    // Areco 式窗口融合：内容延伸进标题栏，红绿灯内嵌（仅 macOS）
+    // Audicode 式窗口融合：内容延伸进标题栏，红绿灯内嵌（仅 macOS）
     ...(process.platform === 'darwin' ? { titleBarStyle: 'hiddenInset' } : {}),
     webPreferences: {
       contextIsolation: true,
@@ -99,8 +99,8 @@ if (!gotLock) {
   })
 
   app.whenReady().then(() => {
-    app.setName('areco')
-    // 开发态（未打包）下 macOS dock 默认是 Electron 图标，换成 areco 的
+    app.setName('audicode')
+    // 开发态（未打包）下 macOS dock 默认是 Electron 图标，换成 audicode 的
     if (process.platform === 'darwin' && !app.isPackaged) {
       app.dock?.setIcon(iconPath)
     }

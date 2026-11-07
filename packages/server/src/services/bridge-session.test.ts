@@ -9,7 +9,7 @@ import os from 'node:os'
 import path from 'node:path'
 import type { AgentBridgeClient } from './agent-bridge'
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-bridge-session-'))
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-bridge-session-'))
 process.env.ARECO_ROOT = root
 
 // session.ts 经 ESM 加载会撞 @xterm/headless（UMD 包）无具名导出的限制，走 CJS require 绕过

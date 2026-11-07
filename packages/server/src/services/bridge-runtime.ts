@@ -16,7 +16,7 @@ export async function ensureBridgeRuntime(): Promise<AgentBridgeClient> {
   if (testingClient) return testingClient
   if (!manager) {
     manager = new AgentBridgeManager({
-      key: 'areco',
+      key: 'audicode',
       // 隔离 home 是纪律：bridge 会话的状态绝不写生产 ~/.qclaw-hermes
       hermesHome: process.env.ARECO_BRIDGE_HERMES_HOME ?? path.join(os.homedir(), '.hermes-agent-bridge'),
       provider: process.env.ARECO_BRIDGE_PROVIDER ?? 'qclaw',

@@ -1,5 +1,5 @@
 // Hermes CLI 会话不落 JSONL，真身在 $HERMES_HOME/state.db 的 sessions/messages 表。
-// 本文件只负责 Areco 会话交接读取；微信 gateway 会话与 cron 会话不参与座舱卡片绑定。
+// 本文件只负责 Audicode 会话交接读取；微信 gateway 会话与 cron 会话不参与座舱卡片绑定。
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -27,7 +27,7 @@ function contentPart(role: string, content: string, toolName: string): Transcrip
   return { kind: 'text', text: content }
 }
 
-/** 按原生 id 优先，否则用 cwd + Areco 进程生命周期定位对应的 Hermes CLI 会话。 */
+/** 按原生 id 优先，否则用 cwd + Audicode 进程生命周期定位对应的 Hermes CLI 会话。 */
 export function readHermesHandoffMessages(session: Session, template: Template): TranscriptMessage[] {
   const dbPath = path.join(hermesHomeOf(template), 'state.db')
   if (!fs.existsSync(dbPath)) return []

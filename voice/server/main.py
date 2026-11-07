@@ -22,7 +22,7 @@ class TTS(Protocol):
 
 def create_app(engine: TTS, cfg: Config) -> web.Application:
     async def healthz(_request: web.Request) -> web.Response:
-        return web.json_response({"ok": True, "service": "areco-tts", "sampleRate": 24000})
+        return web.json_response({"ok": True, "service": "audicode-tts", "sampleRate": 24000})
 
     async def synthesize(request: web.Request) -> web.StreamResponse:
         try:

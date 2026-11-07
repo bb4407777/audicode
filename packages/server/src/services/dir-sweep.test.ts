@@ -6,7 +6,7 @@ import path from 'node:path'
 import { sweepForDir } from './dir-sweep'
 
 // 模拟「刚新建、Spotlight 还没索引」的目录树——sweep 不依赖任何索引，纯 readdir 实扫
-const base = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-dir-sweep-'))
+const base = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-dir-sweep-'))
 fs.mkdirSync(path.join(base, 'Desktop', '咨询', '未命名文件夹'), { recursive: true })
 fs.writeFileSync(path.join(base, 'Desktop', '咨询', '未命名文件夹', '微信图片_1.jpg'), 'x')
 fs.mkdirSync(path.join(base, 'Desktop', '旧案', '未命名文件夹'), { recursive: true }) // 同名但子项不符

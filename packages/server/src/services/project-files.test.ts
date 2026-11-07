@@ -6,7 +6,7 @@ import path from 'node:path'
 import { FileService } from './files'
 import { ProjectFileService } from './project-files'
 
-const base = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-project-files-'))
+const base = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-project-files-'))
 const root = path.join(base, 'case')
 const outside = path.join(base, 'outside')
 fs.mkdirSync(path.join(root, '6庭后补充'), { recursive: true })

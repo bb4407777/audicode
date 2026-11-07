@@ -9,7 +9,7 @@ import os from 'node:os'
 import path from 'node:path'
 import Koa from 'koa'
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-hermes-wh-'))
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-hermes-wh-'))
 process.env.ARECO_ROOT = root
 
 const { createHermesWebhookMiddleware, HERMES_WEBHOOK_PATH } = await import('./webhooks-hermes')

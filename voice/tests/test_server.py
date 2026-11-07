@@ -25,7 +25,7 @@ class SidecarTest(AioHTTPTestCase):
     async def test_health(self):
         response = await self.client.get("/healthz")
         self.assertEqual(response.status, 200)
-        self.assertEqual((await response.json())["service"], "areco-tts")
+        self.assertEqual((await response.json())["service"], "audicode-tts")
 
     async def test_fixed_pcm_stream(self):
         response = await self.client.post("/synthesize", json={"text": "第一句。第二句"})

@@ -105,7 +105,7 @@ export function templateColor(
   return templates?.find((t) => t.id === session.templateId)?.color ?? '#7d8590'
 }
 
-/** 历史会话 source（agent 来源）→ 颜色：优先匹配 areco 模板取 template.color（与活会话同色），否则按 source 稳定取兜底色 */
+/** 历史会话 source（agent 来源）→ 颜色：优先匹配 audicode 模板取 template.color（与活会话同色），否则按 source 稳定取兜底色 */
 const SOURCE_FALLBACK = ['#a371f7', '#79c0ff', '#56d364', '#ffa657', '#f778ba', '#e3b341', '#d2a8ff', '#7d8590']
 function hashSource(s: string): number {
   let h = 0

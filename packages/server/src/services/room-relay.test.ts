@@ -7,7 +7,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-relay-'))
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-relay-'))
 process.env.ARECO_ROOT = root
 // auto-recall 测试需脚本路径非空（假 recallRunner 不起真子进程，路径值本身不被使用）
 process.env.ARECO_RECALL_SCRIPT = 'recall-stub'
@@ -52,7 +52,7 @@ function mockManager(runningIds: string[]): { manager: unknown; sent: Sent } {
 let seq = 0
 function setup(): { rooms: InstanceType<typeof RoomStore>; roomId: string; team: string; name: string } {
   const rooms = new RoomStore('Owner')
-  const name = `areco${++seq}` // 每个 test 唯一项目名（rooms.json 在临时目录累积，防撞名）
+  const name = `audicode${++seq}` // 每个 test 唯一项目名（rooms.json 在临时目录累积，防撞名）
   const room = rooms.create(name)
   rooms.addMember(room.id, { name: 'A', kind: 'session', sessionId: 'sa' })
   rooms.addMember(room.id, { name: 'B', kind: 'session', sessionId: 'sb' })
@@ -493,7 +493,7 @@ test('human_relay：名单外 agent 打标无效——不广播、不清零、�
 
 test('项目房间驻场简报：每个进程代际只带一次 PROJECT.md 指路；任务房不带', () => {
   const rooms = new RoomStore('Owner')
-  const proj = rooms.create(`areco-proj${++seq}`, 'project', '/tmp/proj-root')
+  const proj = rooms.create(`audicode-proj${++seq}`, 'project', '/tmp/proj-root')
   rooms.addMember(proj.id, { name: 'A', kind: 'session', sessionId: 'sa' })
   const { manager, sent } = mockManager(['sa', 'sb'])
   const relay = new RoomRelay(rooms, manager as never, () => {})
@@ -507,7 +507,7 @@ test('项目房间驻场简报：每个进程代际只带一次 PROJECT.md 指�
   assert.doesNotMatch(sent['sa'][1], /驻场成员/, '同代际第二条不再重复简报')
 
   // 任务房（kind 默认 task）即便绑了 rootPath 也不带简报——PROJECT.md 是项目专属约定
-  const task = rooms.create(`areco-task${++seq}`)
+  const task = rooms.create(`audicode-task${++seq}`)
   rooms.setRootPath(task.id, '/tmp/task-root')
   rooms.addMember(task.id, { name: 'B', kind: 'session', sessionId: 'sb' })
   relay.postMessage(task.id, 'Owner', '看下报错')
@@ -579,7 +579,7 @@ test('Layer1：投递 note 含反冒名指令，回执命令仍带成员名（�
 
 test('Layer2：绑定会话被别的模板接手时，tick 摄入的外部回执 from 校正为当前模板名（主循环分支）', () => {
   const rooms = new RoomStore('Owner')
-  const room = rooms.create(`areco-sign${++seq}`)
+  const room = rooms.create(`audicode-sign${++seq}`)
   rooms.addMember(room.id, { name: 'Glm5.2', kind: 'session', sessionId: 'sa', templateId: 'tpl-glm' })
   const { manager, sent } = mockManagerTpls([{ id: 'sa', templateId: 'tpl-hy3' }], { 'tpl-hy3': 'hy3' })
   const broadcasts: { type: string; roomId?: string; message?: { from: string } }[] = []
@@ -608,7 +608,7 @@ test('Layer2：绑定会话被别的模板接手时，tick 摄入的外部回执
 
 test('Layer2：初见房间分支（启动后新帖）同样校正署名', () => {
   const rooms = new RoomStore('Owner')
-  const room = rooms.create(`areco-sign-ff${++seq}`)
+  const room = rooms.create(`audicode-sign-ff${++seq}`)
   rooms.addMember(room.id, { name: 'Glm5.2', kind: 'session', sessionId: 'sa', templateId: 'tpl-glm' })
   projectDb.send(room.team, 'Glm5.2', 'Owner', '接手机器人的第一条回执')
   const { manager } = mockManagerTpls([{ id: 'sa', templateId: 'tpl-hy3' }], { 'tpl-hy3': 'hy3' })
@@ -627,7 +627,7 @@ test('Layer2：初见房间分支（启动后新帖）同样校正署名', () =>
 test('Layer2：templateId 一致 / 会话已死 / 校正目标与房内成员重名——边界行为', () => {
   // 一致：不动
   const rooms = new RoomStore('Owner')
-  const room1 = rooms.create(`areco-sign-same${++seq}`)
+  const room1 = rooms.create(`audicode-sign-same${++seq}`)
   rooms.addMember(room1.id, { name: 'Glm5.2', kind: 'session', sessionId: 'sa', templateId: 'tpl-glm' })
   const { manager: m1 } = mockManagerTpls([{ id: 'sa', templateId: 'tpl-glm' }], { 'tpl-glm': 'Glm5.2' })
   const relay1 = new RoomRelay(rooms, m1 as never, () => {})
@@ -640,7 +640,7 @@ test('Layer2：templateId 一致 / 会话已死 / 校正目标与房内成员重
   assert.equal(rows1[rows1.length - 1].from, 'Glm5.2', 'templateId 一致时不动')
 
   // 会话已死（exited 仍在 Map）：不动——死会话的 templateId 证明不了当前执行者
-  const room2 = rooms.create(`areco-sign-dead${++seq}`)
+  const room2 = rooms.create(`audicode-sign-dead${++seq}`)
   rooms.addMember(room2.id, { name: 'Glm5.2', kind: 'session', sessionId: 'sd', templateId: 'tpl-glm' })
   const { manager: m2 } = mockManagerTpls(
     [
@@ -659,7 +659,7 @@ test('Layer2：templateId 一致 / 会话已死 / 校正目标与房内成员重
   assert.equal(rows2[rows2.length - 1].from, 'Glm5.2', '绑定会话已退出时不动')
 
   // 校正目标名与房内另一成员重名：照改（from 只作署名，member 匹配走错名兜底）
-  const room3 = rooms.create(`areco-sign-clash${++seq}`)
+  const room3 = rooms.create(`audicode-sign-clash${++seq}`)
   rooms.addMember(room3.id, { name: 'Glm5.2', kind: 'session', sessionId: 'sa', templateId: 'tpl-glm' })
   rooms.addMember(room3.id, { name: 'hy3', kind: 'session', sessionId: 'se', templateId: 'tpl-hy3' })
   const { manager: m3 } = mockManagerTpls(
@@ -880,7 +880,7 @@ test('FIX A/D 正文耗尽：4 次全吞 → 补注丢弃、自动捕获锚撤�
 
 test('FIX B 就绪门：spawn 后零输出不注入，首屏输出后才注入；recall 先到也只能等正文（事故端到端）', async () => {
   const rooms = new RoomStore('Owner')
-  const room = rooms.create(`areco-boot${++seq}`)
+  const room = rooms.create(`audicode-boot${++seq}`)
   rooms.addMember(room.id, { name: 'Q', kind: 'session', sessionId: 'sq' })
   const { manager, sessions } = mockEchoManager(['sq'])
   const sq = sessions.get('sq')!
@@ -909,7 +909,7 @@ test('FIX B 就绪门：spawn 后零输出不注入，首屏输出后才注入�
 
 test('FIX B 就绪门上限：始终零输出的哑会话到点强制放行，串行队列不挂死', async () => {
   const rooms = new RoomStore('Owner')
-  const room = rooms.create(`areco-mute${++seq}`)
+  const room = rooms.create(`audicode-mute${++seq}`)
   rooms.addMember(room.id, { name: 'M', kind: 'session', sessionId: 'sm' })
   const { manager, sessions } = mockEchoManager(['sm'])
   const sm = sessions.get('sm')!
@@ -933,7 +933,7 @@ test('FIX B 就绪门上限：始终零输出的哑会话到点强制放行，�
 
 test('FIX E：文本滞留输入框（marker 反复重绘）→ 补裸回车后提交成功，判送达', async () => {
   const rooms = new RoomStore('Owner')
-  const room = rooms.create(`areco-fixe1${++seq}`)
+  const room = rooms.create(`audicode-fixe1${++seq}`)
   rooms.addMember(room.id, { name: 'S', kind: 'session', sessionId: 'ss' })
   const { manager, sessions } = mockEchoManager(['ss'])
   const ss = sessions.get('ss')!
@@ -958,7 +958,7 @@ test('FIX E：文本滞留输入框（marker 反复重绘）→ 补裸回车后�
 
 test('FIX E：补满上限仍未提交 → 如实报未送达，补注被丢弃（不污染会话首条）', async () => {
   const rooms = new RoomStore('Owner')
-  const room = rooms.create(`areco-fixe2${++seq}`)
+  const room = rooms.create(`audicode-fixe2${++seq}`)
   rooms.addMember(room.id, { name: 'D', kind: 'session', sessionId: 'sd' })
   const { manager, sessions } = mockEchoManager(['sd'])
   const sd = sessions.get('sd')!

@@ -9,7 +9,7 @@ export interface InputLogEntry {
   ok?: boolean
 }
 
-const KEY = 'areco-input-log'
+const KEY = 'audicode-input-log'
 const CAP = 300
 
 /** 控制字符转可见形式，换行/回车/ESC 等一眼可辨 */

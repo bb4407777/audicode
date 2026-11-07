@@ -18,7 +18,7 @@
 // - WS sendline 会走首句命名（"continue" 过 isNameWorthy 门槛，占位名会话会被改名）并虚增
 //   promptCount，故用底层 input（"continue\r"，服务端 write() 自动拆帧 300ms 延迟回车）；
 // - 不 attach：gateway 只对 attached 连接做控制者 resize，不 attach = 不碰任何人的终端尺寸。
-// 本脚本是「agent 不得绕道 WS 直写终端」硬闸的**特许例外**（areco SKILL.md 同步注记）：
+// 本脚本是「agent 不得绕道 WS 直写终端」硬闸的**特许例外**（audicode SKILL.md 同步注记）：
 // 载荷固定为 "continue"，目标由屏幕状态机判定，每次动作追加审计 JSONL——可审计，非自由注入。
 //
 // 用法：
@@ -367,7 +367,7 @@ function selfTest() {
   process.exit(fail === 0 ? 0 : 1)
 }
 
-// ---- areco API -------------------------------------------------------------
+// ---- audicode API -------------------------------------------------------------
 
 async function api(p) {
   const r = await fetch(`${BASE}/api${p}`)
@@ -529,7 +529,7 @@ function notifyWeixin(text) {
 async function main() {
   if (has('--self-test')) selfTest()
   if (has('--test-notify')) {
-    notifyWeixin('🩺 areco 会话巡检通道测试：每 30 秒体检 claude 系会话，报错卡死/冻结尾注自动 continue、确认框自动 Enter；持续 1 分钟自动切 FreeModel key×节点（探活选通）再续，异常才提醒。')
+    notifyWeixin('🩺 audicode 会话巡检通道测试：每 30 秒体检 claude 系会话，报错卡死/冻结尾注自动 continue、确认框自动 Enter；持续 1 分钟自动切 FreeModel key×节点（探活选通）再续，异常才提醒。')
     return
   }
   if (PATROL && (DRY || FORCE || ONLY)) {
@@ -825,7 +825,7 @@ async function main() {
     // 注入后仍卡的也不单独吵，反复失败会走 give-up/dialog-stuck 聚合。只有需要人出手的才推微信。
     const alerts = logworthy.filter((r) => r.action !== 'sent' && r.action !== 'dialog-enter')
     if (alerts.length) {
-      const text = ['🩺 areco 会话巡检', ...alerts.map(line)].join('\n')
+      const text = ['🩺 audicode 会话巡检', ...alerts.map(line)].join('\n')
       if (!notifyWeixin(text)) console.log('（微信通知发送失败，见审计日志）')
     }
     return

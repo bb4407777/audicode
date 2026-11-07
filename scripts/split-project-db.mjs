@@ -10,7 +10,7 @@
 // - projects.db 三张自增表 seed 到 10_000_000（服务端 openFor 同款双保险），
 //   未来新增两库 id 永不相撞；
 // - 孤儿 team（rooms.json 查无，多为已删任务房遗留）留在 tasks.db，与运行时兜底一致；
-// - 跑完后须重启 com.areco（服务端持旧连接/旧代码）。
+// - 跑完后须重启 com.audicode（服务端持旧连接/旧代码）。
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -102,4 +102,4 @@ const after = {
   projDispatch: Number(db.prepare('SELECT COUNT(*) AS n FROM proj.dispatch').get().n),
 }
 console.log(`✅ 迁移完成：projects.db messages=${after.projMessages} dispatch=${after.projDispatch}；tasks.db 剩 messages=${after.tasksMessages}`)
-console.log('▶ 生效需重启 com.areco（在普通终端、非 areco 会话内执行）：launchctl kickstart -k gui/$(id -u)/com.areco')
+console.log('▶ 生效需重启 com.audicode（在普通终端、非 audicode 会话内执行）：launchctl kickstart -k gui/$(id -u)/com.audicode')

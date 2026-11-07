@@ -19,7 +19,7 @@ await esbuild.build({
   format: 'cjs',
   // 根 package.json 是 type:module，CJS 产物必须用 .cjs 后缀
   outfile: resolve(serverOutDir, 'index.cjs'),
-  // npm bin 入口直接执行本文件（package.json bin.areco），须带 shebang
+  // npm bin 入口直接执行本文件（package.json bin.audicode），须带 shebang
   banner: { js: '#!/usr/bin/env node' },
   external: ['node-pty'],
   define: {

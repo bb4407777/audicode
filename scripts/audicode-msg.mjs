@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// areco 项目消息 CLI：本机终端/agent 回执与插话用，直写 data/tasks.db（WAL，与服务端并发安全）。
+// audicode 项目消息 CLI：本机终端/agent 回执与插话用，直写 data/tasks.db（WAL，与服务端并发安全）。
 // 用法：
-//   发消息：node scripts/areco-msg.mjs <team> <from> <to> <消息...> [--human-relay] [--dry-run] [--strict]
+//   发消息：node scripts/audicode-msg.mjs <team> <from> <to> <消息...> [--human-relay] [--dry-run] [--strict]
 //     team = 项目 team 名（页面「⇗ 邀请」里可查，形如 room-<id>；rooms 子命令可列全量）
 //     from = 发言身份（项目成员名；外部终端可用任意名字，仅作显示）
 //     to   = 收件身份（成员名 / all）
@@ -11,11 +11,11 @@
 //       多行消息用这个，不再受 shell 分词/引号折磨）；此时命令行不带 <消息...>
 //     --dry-run = 只校验并预览路由（team/归档/成员/白名单/正文），不落库
 //     --strict  = 「to 非房内成员」「human-relay 白名单外」两类警告升级为错误（exit 5）
-//   查历史：node scripts/areco-msg.mjs <team> history [N]
+//   查历史：node scripts/audicode-msg.mjs <team> history [N]
 //     打印该项目最近 N 条消息（默认 20，旧→新）。共享上下文空间的主动查询入口——
 //     服务端投递时只附「文件路径 + 近况预览」，想看全量来龙去脉用本子命令自查。
-//   查房间：node scripts/areco-msg.mjs rooms [--all]    在册房间清单（默认不含归档）
-//   查成员：node scripts/areco-msg.mjs members <team>   房间花名册（to 需精确匹配成员名）
+//   查房间：node scripts/audicode-msg.mjs rooms [--all]    在册房间清单（默认不含归档）
+//   查成员：node scripts/audicode-msg.mjs members <team>   房间花名册（to 需精确匹配成员名）
 // exit code（成功时 stdout 只有一行 ok，向后兼容；一切诊断信息走 stderr）：
 //   0 成功 | 1 用法错误 | 3 team 不存在 | 4 房间已归档 | 5 --strict 校验失败
 //   65 数据库损坏 | 74 磁盘满/IO | 75 数据库忙（重试后仍锁）| 77 无写权限 | 10 其他错误
@@ -64,9 +64,9 @@ for (let i = 0; i < rawArgv.length; i++) {
 
 function usage(err) {
   // 头两行与旧版逐字一致（外部文档/肌肉记忆认它）；err 给具体差错，别让人对着通用用法猜
-  console.error('用法: node scripts/areco-msg.mjs <team> <from> <to> <消息...>')
-  console.error('      node scripts/areco-msg.mjs <team> history [N]')
-  console.error('      node scripts/areco-msg.mjs rooms [--all] ｜ members <team>')
+  console.error('用法: node scripts/audicode-msg.mjs <team> <from> <to> <消息...>')
+  console.error('      node scripts/audicode-msg.mjs <team> history [N]')
+  console.error('      node scripts/audicode-msg.mjs rooms [--all] ｜ members <team>')
   console.error('      长消息/多行消息：<team> <from> <to> --stdin（或 --file <路径>）')
   console.error('      其他 flag：--human-relay --dry-run --strict；exit code 见脚本头部注释')
   if (err) console.error(`✗ ${err}`)
@@ -185,7 +185,7 @@ function dieTeamNotFound(team, roomsList) {
   const head = team.slice(0, 9)
   const cand = roomsList.filter((r) => r.team.startsWith(head) || (r.name && r.name.includes(team))).slice(0, 3)
   if (cand.length) console.error(`  是不是想找：${cand.map((r) => `${r.team}（${r.name}）`).join('、')}`)
-  console.error('  全量清单：node scripts/areco-msg.mjs rooms')
+  console.error('  全量清单：node scripts/audicode-msg.mjs rooms')
   process.exit(EXIT.teamNotFound)
 }
 
@@ -286,7 +286,7 @@ const to = argv[2]
 if (flags.stdin && flags.file) usage('--stdin 与 --file 只能二选一')
 let body
 if (flags.stdin) {
-  if (process.stdin.isTTY) usage('--stdin 需要管道/重定向输入（如 printf "…" | node scripts/areco-msg.mjs …）')
+  if (process.stdin.isTTY) usage('--stdin 需要管道/重定向输入（如 printf "…" | node scripts/audicode-msg.mjs …）')
   if (argv.length > 3) usage('用了 --stdin 就不要再在命令行带 <消息...>（二者取谁会歧义）')
   body = readFileSync(0, 'utf8')
 } else if (flags.file) {
@@ -375,7 +375,7 @@ if (!process.env.ARECO_MSG_NO_PING && !(process.env.ARECO_ROOT && !existsSync(co
   try {
     await fetch(`http://127.0.0.1:${conf.port}/healthz`, { signal: AbortSignal.timeout(800) })
   } catch {
-    console.error(`⚠️ areco 服务端（127.0.0.1:${conf.port}/healthz）未响应：消息已落库、页面可见，但离线期间不投递，服务端重启后为防重放也不补投——需送达请在服务端恢复后重发本条`)
+    console.error(`⚠️ audicode 服务端（127.0.0.1:${conf.port}/healthz）未响应：消息已落库、页面可见，但离线期间不投递，服务端重启后为防重放也不补投——需送达请在服务端恢复后重发本条`)
   }
 }
 process.exit(EXIT.ok)

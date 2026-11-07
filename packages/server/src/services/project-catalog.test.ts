@@ -7,7 +7,7 @@ import os from 'node:os'
 import path from 'node:path'
 import type { RoomInfo } from '../../../shared/protocol'
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-project-catalog-'))
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-project-catalog-'))
 process.env.ARECO_ROOT = root
 const dataDir = path.join(root, 'data')
 const casesRoot = path.join(root, 'cases')

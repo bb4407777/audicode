@@ -1,4 +1,4 @@
-# AGENTS.md（areco 仓内 agent 行为约束）
+# AGENTS.md（audicode 仓内 agent 行为约束）
 
 > 本仓由多 agent（Claude Code / Codex / WorkBuddy / Kimi CLI …）接力开发。
 > 每条规则都踩过坑，别删，只增补。
@@ -25,14 +25,14 @@
   **两套组件**，改一套不等于另一套生效。共用逻辑抽成公共模块（如 utils/sessionGroups），
   不许复制两份漂移；交付前两端各过一遍。
 - 测试：`npm test`（tsx --test，含服务端/客户端/共享层）；类型检查即构建前置。
-- 部署：`./start.sh restart`（launchd com.areco 已接管，脚本自动转发 kickstart）；
+- 部署：`./start.sh restart`（launchd com.audicode 已接管，脚本自动转发 kickstart）；
   生产 8790 可能有用户在舱内开着的会话，重启前先 `/api/sessions` 看一眼。
 - shell 脚本：macOS 系统 bash 3.2 下 `$VAR` 后紧跟中文/全角字符会把首字节
   粘进变量名（set -u 直接炸）——变量后接 CJK 一律写 `${VAR}`。
 - `config.json`、`data/`、`bin/` 是 gitignore 的本机私有物，不入仓。
 - 桌面壳 `packages/app/`（2026-08-13 新增，独立 package）：Electron 壳，只 loadURL
-  到 areco server（默认 8790，`ARECO_URL` 覆盖），不打包前端、无 IPC；改 server 端口
-  或部署形态时同步看它。档案：`data/handoff/2026-08-13-areco-desktop-shell.md`。
+  到 audicode server（默认 8790，`ARECO_URL` 覆盖），不打包前端、无 IPC；改 server 端口
+  或部署形态时同步看它。档案：`data/handoff/2026-08-13-audicode-desktop-shell.md`。
 
 ## 复用模式清单（2026-07-24 高律师定：一套更换，改一处必同步）
 
@@ -56,7 +56,7 @@
 - `utils/sessionGroups.ts`：桌面侧栏与手机看板的项目分组规则（双端同源）。
 - `utils/clipboard.ts` `copyPlainText`：双通道复制（气泡/项目消息同用）。
 - `utils/filelinks.ts` + `FilePreview.vue`：正文里文件路径 → chip 预览。
-- `stores/ui.ts`：本机 UI 偏好（localStorage `areco-ui`）。加新偏好 = 加字段 +
+- `stores/ui.ts`：本机 UI 偏好（localStorage `audicode-ui`）。加新偏好 = 加字段 +
   `DEFAULT_PREFS` + `persist()` + setter，设置页用「对话模式」卡片的 `pref-row` 样式挂开关。
 - `SpawnDialog.vue`：`spawned` 事件**必须传完整 SessionSummary**——store 靠 ws 推送，
   spawn 返回瞬间 `byId` 查不到新会话（2026-07-23 落点判断失效即此坑）。

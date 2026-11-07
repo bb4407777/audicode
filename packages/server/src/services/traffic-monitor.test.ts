@@ -14,7 +14,7 @@ function transcriptRow(role: 'user' | 'assistant', content: unknown): string {
 }
 
 test('traffic monitor reads completed transcript lines and ignores an incomplete tail', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-traffic-'))
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-traffic-'))
   const file = path.join(dir, 'transcript.jsonl')
   try {
     fs.writeFileSync(file, `${transcriptRow('user', '处理任务')}\n`)

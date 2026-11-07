@@ -112,7 +112,7 @@ function listFiles(dir: string, suffix: string): string[] {
 
 /**
  * WorkBuddy 桌面端会按 cwd 的 realpath 写项目目录；macOS 上 /tmp 会变成 /private/tmp。
- * Areco 会话仍保留调用方原始 cwd，因此定位时两种 slug 都要覆盖。
+ * Audicode 会话仍保留调用方原始 cwd，因此定位时两种 slug 都要覆盖。
  */
 export function workbuddyProjectSlugs(cwd: string): string[] {
   const paths = [cwd]

@@ -1,26 +1,26 @@
-# Areco
+# Audicode
 
-> **2026-09-13 起 StandCode 组件退役**：本仓回归单一 areco 项目（源码扁平化至仓根，
+> **2026-09-13 起 StandCode 组件退役**：本仓回归单一 audicode 项目（源码扁平化至仓根，
 > standcode/ 已移除，历史在 git 里）。两个 GitHub 仓
 > [bb4407777/standcode](https://github.com/bb4407777/standcode) 与
-> [bb4407777/areco](https://github.com/bb4407777/areco) 内容恒等，
-> 推送用 `scripts/sync-areco-mirror.sh`（先主后镜像，双仓同推）。
+> [bb4407777/audicode](https://github.com/bb4407777/audicode) 内容恒等，
+> 推送用 `scripts/sync-audicode-mirror.sh`（先主后镜像，双仓同推）。
 
 | 是什么 | npm |
 |---|---|
-| 多 agent 会话座舱：pty 服务端、transcript、项目房间、设备接管 | [`areco`](https://www.npmjs.com/package/areco) |
+| 多 agent 会话座舱：pty 服务端、transcript、项目房间、设备接管 | [`audicode`](https://www.npmjs.com/package/audicode) |
 
 ---
 
-# Areco（底座）
+# Audicode（底座）
 
-> 原名 **agent-remote**，v2.2.0 起更名为 **areco**（A **Re**mote **Co**worker）。
+> 原名 **agent-remote**，v2.2.0 起更名为 **audicode**（A **Re**mote **Co**worker）。
 
 CLI Agent 网页远程座舱 —— 在浏览器/手机上远程驾驶 Claude Code、Codex、Reasonix 等 CLI 编程智能体。
 
 ## English
 
-**Areco is a remote cockpit for CLI coding agents** — drive Claude Code, Codex, Reasonix and other terminal-based AI agents from your browser or phone, like a chat app for your agents.
+**Audicode is a remote cockpit for CLI coding agents** — drive Claude Code, Codex, Reasonix and other terminal-based AI agents from your browser or phone, like a chat app for your agents.
 
 - **Multi-agent, multi-session**: spawn sessions from templates (claude / codex / reasonix / shell / custom), each with its own working directory
 - **Server-side pty**: start a task on your phone, lock the screen, come back hours later — the session resumes pixel-perfect (shadow-terminal snapshots + offset streaming, alt-screen TUIs included)
@@ -30,7 +30,7 @@ CLI Agent 网页远程座舱 —— 在浏览器/手机上远程驾驶 Claude Co
 - **Zero cloud**: self-hosted single binary, your agents and data stay on your machine
 
 ```bash
-npm i -g areco && areco   # then open http://127.0.0.1:8790
+npm i -g audicode && audicode   # then open http://127.0.0.1:8790
 ```
 
 Apache-2.0 · [GitHub](https://github.com/bb4407777/standcode)（main repo）· 中文文档见下文
@@ -66,21 +66,21 @@ Apache-2.0 · [GitHub](https://github.com/bb4407777/standcode)（main repo）· 
 方式一：npm（推荐）
 
 ```bash
-npm i -g areco     # node >= 24
-areco              # 首跑在当前目录生成 config.json 与 data/（可用 ARECO_ROOT=/path 指定数据根）
+npm i -g audicode     # node >= 24
+audicode              # 首跑在当前目录生成 config.json 与 data/（可用 ARECO_ROOT=/path 指定数据根）
 ```
 
 打开 `http://127.0.0.1:8790/` 即用（本机 loopback + 未设密码 = 免登录）。要手机/局域网访问：
 
 ```bash
-areco --hash "你的密码" --save     # 先设密码（非 loopback 绑定无密码会拒绝启动）
+audicode --hash "你的密码" --save     # 先设密码（非 loopback 绑定无密码会拒绝启动）
 # 再把 config.json 的 server.host 改为 0.0.0.0，重启
 ```
 
 方式二：源码
 
 ```bash
-git clone https://github.com/bb4407777/areco.git && cd areco
+git clone https://github.com/bb4407777/audicode.git && cd audicode
 npm install                       # node >= 24
 npm run hash -- "你的密码" --save   # 非 loopback 绑定必须设密码，否则拒绝启动
 npm run build
@@ -96,7 +96,7 @@ npm test                          # zsh 转义单测
 node scripts/selftest.mjs http://127.0.0.1:8790 "密码"   # 端到端自检（含历史对话 4 项；免密模式不传密码）
 ```
 
-> **常驻可交 launchd 管理**（macOS，可选）：写一个 `~/Library/LaunchAgents/com.areco.plist`
+> **常驻可交 launchd 管理**（macOS，可选）：写一个 `~/Library/LaunchAgents/com.audicode.plist`
 > （KeepAlive + RunAtLoad，WorkingDirectory 指仓库根，ProgramArguments 跑 `node dist/server/index.cjs`）。
 > 改动后重载：`launchctl bootout gui/$(id -u) <plist> && launchctl bootstrap gui/$(id -u) <plist>`。
 > 注意：launchd 实例会被 KeepAlive 自动拉活。`./start.sh restart` 区分调用来源——
@@ -118,7 +118,7 @@ node scripts/selftest.mjs http://127.0.0.1:8790 "密码"   # 端到端自检（�
   `POST /api/rooms/:id/members {"templateId":"claude-glm52"}`）；专属会话随项目归档级联管理，
   **删除项目会连带删除专属会话**——讨论收摊用「归档」（可随时恢复），删除是不可逆动作
 - **消息与投递**：房间消息正文带 `@成员名` / `@all` 才注入目标会话终端（人类成员发言默认投全体）；
-  目标会话已退出会**自动 resume 拉起再投递**；agent 回执走包内 `scripts/areco-msg.mjs`
+  目标会话已退出会**自动 resume 拉起再投递**；agent 回执走包内 `scripts/audicode-msg.mjs`
   （零依赖 CLI，直写 `data/projects.db`，本机任何终端都能插话）；agent 互调链深上限 3 跳防环
 - **调度模式**：`serial` 串行轮转（默认，一次只放行一位成员发言，讨论不刷屏）/
   `parallel` 全员同时 / `claim` 认领制，项目页随时切换

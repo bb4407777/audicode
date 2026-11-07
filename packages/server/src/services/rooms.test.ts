@@ -6,7 +6,7 @@ import os from 'node:os'
 import path from 'node:path'
 import type { RoomMember } from '../../../shared/protocol'
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-rooms-'))
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-rooms-'))
 process.env.ARECO_ROOT = root
 
 const { parseMentions, RoomStore } = await import('./rooms')

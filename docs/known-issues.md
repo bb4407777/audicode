@@ -1,4 +1,4 @@
-# areco 已知问题（待修，附修法）
+# audicode 已知问题（待修，附修法）
 
 > 建档：2026-07-26 | 来源：只读审计 + 逐条核码
 > 本文只收「已核实、但**刻意没在本轮修**」的问题，并写明为什么没修、以及具体怎么修。
@@ -96,7 +96,7 @@ OOM / `/api/server/restart`），重启后会话被恢复成 `exitReason:'server
 
 `fs.openSync(path.join(process.cwd(), 'data/logs/restart.log'), 'a')` 在裸
 `setTimeout` 回调里、没有 try/catch，`logFd` 也从不 close。若 `data/logs/` 不存在或
-`process.cwd()` 不是仓库根（README 宣传的 `npm i -g areco` 场景），`openSync` 抛 →
+`process.cwd()` 不是仓库根（README 宣传的 `npm i -g audicode` 场景），`openSync` 抛 →
 `uncaughtException` → `index.ts` 的处理器见非 EPIPE 就 3 秒后 `process.exit(1)`。
 此时响应已经回了 `{restarting:true}`，`start.sh` 根本没跑，所有 PTY 无快照死掉。
 
@@ -123,7 +123,7 @@ for (const m of members) {
 }
 ```
 
-串行分支是对的（先查 `busy` 再注入），并行分支反了。触发条件：areco 在人类发消息后 3 秒内
+串行分支是对的（先查 `busy` 再注入），并行分支反了。触发条件：audicode 在人类发消息后 3 秒内
 重启，首轮快进把「新消息」重放进 `onMessageStored`。底账不会脏（`createDispatch` 幂等、
 既有投递已是 `injected`），但**每个成员的终端会再收到一遍同样的任务**，两个 agent 干同一件事。
 

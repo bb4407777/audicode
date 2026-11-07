@@ -7,7 +7,7 @@
 // run done = idle，destroy = exited（设计 §5 第 5 点「收益最大处」）。
 //
 // MVP 取舍：审批/澄清经事件挂起 + sendline 路由回应（needs-user 黄灯），超时自动
-// deny/继续；恢复对话（restart resume）不支持——sidecar 会话在内存里，areco 重启即新对话。
+// deny/继续；恢复对话（restart resume）不支持——sidecar 会话在内存里，audicode 重启即新对话。
 import { Session, type SessionInit } from './session'
 import type { SpawnSpec } from './templates'
 import { ensureBridgeRuntime } from './bridge-runtime'
@@ -33,7 +33,7 @@ export class BridgeSession extends Session {
     super(init)
   }
 
-  /** bridge 会话 id 直接用 areco 会话 id：一一对应，destroy/status 都按它找 */
+  /** bridge 会话 id 直接用 audicode 会话 id：一一对应，destroy/status 都按它找 */
   private get bridgeSessionId(): string {
     return this.id
   }

@@ -6,7 +6,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-pdb-'))
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-pdb-'))
 process.env.ARECO_ROOT = root
 
 const db = await import('./project-db')

@@ -49,7 +49,7 @@ const stats = ref<StatsSummary | null>(null)
 const maxSessionsInput = ref<number>(0) // 会话上限编辑值，0 = 无上限
 const savingMaxSessions = ref(false)
 
-// —— StandCode 默认角色：areco 是编辑面与 SoT，StandCode caller.py 启动时读
+// —— StandCode 默认角色：audicode 是编辑面与 SoT，StandCode caller.py 启动时读
 // GET /api/standcode/defaults 覆盖 registry.json；角色留空 = 回落 registry.json
 // 2026-08-01 高律师定：角色统一为 Caller/Thinker/Worker 三个，快速/重活 Worker 退役，
 // 原重活 Worker 功能并入 Thinker（Thinker 默认锚 kimi-k3）
@@ -295,7 +295,7 @@ async function dragEnd(e: PointerEvent) {
     const msg = err instanceof Error ? err.message : String(err)
     // 旧服务端没有 reorder 路由：全局 404 处理器回 JSON「未找到」（非 JSON 形态才是「响应异常（HTTP 404）」）
     const stale = msg === '未找到' || msg.includes('404')
-    message.error(stale ? '顺序保存失败：服务端还在跑旧版本，重启 areco 后再拖一次' : `顺序保存失败：${msg}`)
+    message.error(stale ? '顺序保存失败：服务端还在跑旧版本，重启 audicode 后再拖一次' : `顺序保存失败：${msg}`)
     await store.refreshTemplates()
   }
 }

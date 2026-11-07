@@ -28,7 +28,7 @@ test('旧式 env 模板能识别 Hermes 并解析 HERMES_HOME', () => {
 })
 
 test('Hermes 接手从 state.db 按 cwd + 生命周期定位 CLI 会话并读取消息', () => {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-hermes-handoff-'))
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-hermes-handoff-'))
   const db = new DatabaseSync(path.join(home, 'state.db'))
   db.exec(`
     CREATE TABLE sessions (id TEXT PRIMARY KEY, source TEXT, cwd TEXT, started_at REAL, message_count INTEGER);
@@ -43,7 +43,7 @@ test('Hermes 接手从 state.db 按 cwd + 生命周期定位 CLI 会话并读取
   db.close()
   let bound = ''
   const session = {
-    id: 'areco-hermes',
+    id: 'audicode-hermes',
     command: '/usr/bin/env',
     cwd: '/workspace',
     createdAt: 999_000,

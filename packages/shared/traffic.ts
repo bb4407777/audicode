@@ -25,7 +25,7 @@ const PENDING_CHOICE_RE = /do you want to|don'?t ask again|do you trust the file
 
 /**
  * 尾屏是否停在选择/确认对话框：transcript 照不到的终端内 UI（权限框、信任页），
- * 红绿灯的黄灯只能靠影子终端尾屏检出（2026-07-24 areco-voice 权限框不变黄灯报障）
+ * 红绿灯的黄灯只能靠影子终端尾屏检出（2026-07-24 audicode-voice 权限框不变黄灯报障）
  */
 export function screenHasPendingChoice(lines: string[]): boolean {
   return PENDING_CHOICE_RE.test(lines.join('\n'))

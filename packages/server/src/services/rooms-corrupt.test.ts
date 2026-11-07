@@ -12,7 +12,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-rooms-corrupt-'))
+const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-rooms-corrupt-'))
 process.env.ARECO_ROOT = tmpRoot
 
 const { RoomStore } = await import('./rooms')

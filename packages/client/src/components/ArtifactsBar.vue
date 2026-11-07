@@ -3,7 +3,7 @@
 // 纯前端实现：展开时沿 transcript 分页接口把全程翻一遍（只提取路径不渲染消息），
 // 按「最后一次提及」去重排序，再逐个打 /api/files/meta 过滤掉不存在的（含历史假路径）。
 // 点击行为分端（2026-07-31 高律师定）：桌面端调 /api/files/open 用系统默认 App 直接打开，
-// 手机端保持 areco 内部预览；桌面端 open 失败时回退内部预览。
+// 手机端保持 audicode 内部预览；桌面端 open 失败时回退内部预览。
 import { ref, watch } from 'vue'
 import { NSpin } from 'naive-ui'
 import type { FileMeta, TranscriptPage } from '../../../shared/protocol'
@@ -119,12 +119,12 @@ function toggle() {
 
 // 点击 chip：桌面端直接系统打开，手机端内部预览。
 // 桌面端两级系统打开（2026-07-31 高律师指点 8020 现成服务后加第二级）：
-//  ① POST /api/files/open（areco 原生，8790 重启升级后生效）
+//  ① POST /api/files/open（audicode 原生，8790 重启升级后生效）
 //  ② 8790 未重启（404）时回退 skill-server 8020 的 GET /open?path=（常驻、已在用，
-//     其白名单 = ~/Desktop、~/skills、~/Code —— areco 产物与案件文件均在其中）；
+//     其白名单 = ~/Desktop、~/skills、~/Code —— audicode 产物与案件文件均在其中）；
 //     跨域只能 no-cors 盲发（响应读不到），故前端先自查路径在 8020 白名单前缀内才发，
 //     且仅当本页就跑在 127.0.0.1/localhost（局域网访问时 127.0.0.1 指错机器）。
-//  ③ 两级都不可用（8020 也挂了 / 路径不在其白名单）→ 回退 areco 内部预览。
+//  ③ 两级都不可用（8020 也挂了 / 路径不在其白名单）→ 回退 audicode 内部预览。
 const SKILL_SERVER_OPEN = 'http://127.0.0.1:8020/open?path='
 const SKILL_SERVER_ROOTS = ['/Users/gao/Desktop/', '/Users/gao/skills/', '/Users/gao/Code/']
 

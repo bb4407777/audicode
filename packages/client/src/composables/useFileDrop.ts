@@ -1,5 +1,5 @@
 // 文件拖放/选件：document 级拖放监听 + 路径回填输入框。会话页/项目页共用。
-// Electron 壳 → preload 桥（window.arecoShell）直接拿拖入项的真实绝对路径，零网络零复制；
+// Electron 壳 → preload 桥（window.audicodeShell）直接拿拖入项的真实绝对路径，零网络零复制；
 // 浏览器    → 散文件先 Spotlight 反查源路径（name+size 精确匹配），命中零复制直填源路径；
 //             查不到（手机端拍照/网盘/未索引位置）才上传副本落盘 data/uploads；
 //             文件夹不上传内容：只报目录名+首层子项名，服务端 Spotlight 反查（零命中再实扫常用目录，
@@ -11,7 +11,7 @@ import { api } from '../api'
 // Electron 壳 preload（packages/app/preload.js）暴露的桥；纯浏览器环境不存在
 declare global {
   interface Window {
-    arecoShell?: { getPathForFile: (file: File) => string }
+    audicodeShell?: { getPathForFile: (file: File) => string }
   }
 }
 
@@ -162,7 +162,7 @@ export function useFileDrop({ text, inputEl, afterFill }: Options) {
     const dt = e.dataTransfer
     // Electron 壳：拖入的文件/文件夹（含文件夹，Chromium 以 File 形式给出）直接取真实绝对路径，
     // 跳过 Spotlight 反查/上传副本；取不到路径的（网页拖来的虚拟 File）退回原流程
-    const getPathForFile = window.arecoShell?.getPathForFile
+    const getPathForFile = window.audicodeShell?.getPathForFile
     if (getPathForFile && dt.files?.length) {
       const paths: string[] = []
       const rest: File[] = []

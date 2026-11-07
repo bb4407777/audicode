@@ -393,7 +393,7 @@ export class SessionManager extends EventEmitter {
     } else {
       session.clearAgentBinding()
       // 官方 WorkBuddy 非恢复重启必须换一个预分配 UUID；否则清完绑定后 CLI 又自行随机，
-      // Areco 退回事后猜 transcript，等于重新打开错绑入口。
+      // Audicode 退回事后猜 transcript，等于重新打开错绑入口。
       if (template.harness === 'workbuddy') session.bindAgentSession(crypto.randomUUID())
       // 非 resume 重启即换新对话文件：定位/解析缓存同步清掉，否则缓存命中旧路径，对话视图冻结在旧文件
       dropAgentTranscriptCache(session.id)
@@ -654,7 +654,7 @@ export class SessionManager extends EventEmitter {
   /**
    * 终端内选择/权限对话框的黄灯兜底：claude 权限框、信任页等只画在 TUI 里，transcript 照不到
    * （尾消息停在 tool_use → 一直 working 不变黄；对话框开着 transcript 也不再长，指纹不变，
-   * 所以必须每轮都看尾屏，不能只在指纹变化时判——2026-07-24 areco-voice 报障）。
+   * 所以必须每轮都看尾屏，不能只在指纹变化时判——2026-07-24 audicode-voice 报障）。
    * 对话框消失且 transcript 也不认为在等用户时落回 transcript 判定（不抢 transcript 自己的 needs-user）。
    */
   private applyScreenChoiceOverride(

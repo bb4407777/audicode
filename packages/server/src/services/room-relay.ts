@@ -1,5 +1,5 @@
 // 项目协作中继：消息在项目消息库（project-db.ts），本服务做三件事——
-// 1) 轮询拾取：2s 游标轮询各项目新消息（agent 用 areco-msg.mjs 回执的也从这进来），WS 广播给页面；
+// 1) 轮询拾取：2s 游标轮询各项目新消息（agent 用 audicode-msg.mjs 回执的也从这进来），WS 广播给页面；
 // 2) mention 投递：@成员/@all → onceQuiet 注入目标会话终端（注入模板带来源+回执命令）；
 // 3) 防环：人发言清零链路深度；agent 消息触发投递时深度+1，≥MAX_DEPTH 只落库不投递。
 // 页面发消息走 postMessage（落库 + 立即广播 + 投递），不等轮询；轮询只负责"外部进来的"消息。
@@ -104,7 +104,7 @@ export function looksLikeDeliverable(text: string): boolean {
 // 只有成员回复/cancel 驱动轮转。deadline 未设时 sweepTimeouts 已是 no-op。
 
 // ---- auto-recall 记忆注入（2026-07-22 项目房间定稿）：投递 note 时自动跑统一记忆库 recall ----
-// 人→agent 一律注入；agent→agent 仅正文命中委派格式特征才注入；dispatch 指令（from='areco-调度'）算委派。
+// 人→agent 一律注入；agent→agent 仅正文命中委派格式特征才注入；dispatch 指令（from='audicode-调度'）算委派。
 // 每个 root message 只跑一次 recall（按 root id 缓存注入块），任何失败静默跳过，绝不阻塞/炸掉投递。
 /** recall.py 路径：环境变量 ARECO_RECALL_SCRIPT 指定；未配置则 auto-recall 整体关闭（静默跳过，不影响投递） */
 const RECALL_SCRIPT = process.env.ARECO_RECALL_SCRIPT ?? ''
@@ -177,7 +177,7 @@ function renderContext(room: RoomInfo, msgs: projectDb.ProjectMessageRow[]): str
   const lines = [
     `# 项目「${room.name}」共享上下文`,
     '',
-    `> 由 areco 自动维护：项目房间最近 ${msgs.length} 条消息纪要。被投递/@ 时附此文件路径，`,
+    `> 由 audicode 自动维护：项目房间最近 ${msgs.length} 条消息纪要。被投递/@ 时附此文件路径，`,
     `> 让接手的 agent 一进来就看到来龙去脉，不必从零问起（项目 = 共享上下文空间）。`,
     `> 细节以 data/tasks.db 为准；本文件每次有新消息自动刷新。`,
     '',
@@ -347,7 +347,7 @@ export class RoomRelay {
 
   /**
    * 署名校正（2026-07-29 冒名回执事件：hy3 接手 Glm5.2 会话后照抄旧包装里的回执命令，
-   * 干的活记到 GLM 头上）。外部 areco-msg 直写的旧包装命令无法召回，故 tick 摄入时按
+   * 干的活记到 GLM 头上）。外部 audicode-msg 直写的旧包装命令无法召回，故 tick 摄入时按
    * 「成员绑定会话的当前实际模板」校正 from：
    *  - from 命中 kind=session 成员，且绑定会话存活，且 member.templateId ≠ session 当前
    *    templateId（= 会话被别的模板接手）→ from 改写为当前模板显示名，库里行同步 UPDATE，
@@ -440,7 +440,7 @@ export class RoomRelay {
         this.broadcast({ type: 'roomMessage', roomId: room.id, message: this.toRoomMessage(room, msg) })
         this.onMessageStored(room, msg)
       }
-      if (hadNew) this.refreshContext(room) // 外部（areco-msg.mjs 回执等）进来的消息：批量后刷新一次
+      if (hadNew) this.refreshContext(room) // 外部（audicode-msg.mjs 回执等）进来的消息：批量后刷新一次
       // sweepTimeouts 已移除：派发不再因超时自动放下一位（2026-07-27）
     }
   }
@@ -505,7 +505,7 @@ export class RoomRelay {
     if (room.archivedAt !== null) return
     const parsed = parseMentions(body, room.members)
     let { targets, all } = parsed
-    // 外部通道（areco-msg CLI 直写 tasks.db）的收件人记在 to_agent 列、正文不一定带 @：
+    // 外部通道（audicode-msg CLI 直写 tasks.db）的收件人记在 to_agent 列、正文不一定带 @：
     // 正文无 @ 时按列投递，不再静默吞（2026-07-24 会诊房间连吞两条任务书实锤）
     if (!targets.length && !all && toField) {
       if (toField === ALL_MENTION) all = true
@@ -721,7 +721,7 @@ export class RoomRelay {
   }
 
   /**
-   * auto-recall 注入块：人发的一律跑；session 发的仅命中委派格式特征（或 from='areco-调度' 的调度指令）才跑。
+   * auto-recall 注入块：人发的一律跑；session 发的仅命中委派格式特征（或 from='audicode-调度' 的调度指令）才跑。
    * 按 rootMessageId 缓存——同一根消息投多个成员只起一次 python 子进程。无命中/任何失败不注入。
    * P1-6 异步化（2026-07-30）：缓存热 → 同步返回块拼进正文（旧行为）；缓存冷 → block=null
    * 让正文先行注入零等待，后台跑 recall，完成后经 onSettled 回调交回结果（含 null，供调用方清门）。
@@ -734,7 +734,7 @@ export class RoomRelay {
     senderKind: 'human' | 'session',
     onSettled: (block: string | null) => void
   ): { block: string | null; latePending: boolean } {
-    if (senderKind !== 'human' && from !== 'areco-调度' && !DELEGATION_RE.test(flat)) {
+    if (senderKind !== 'human' && from !== 'audicode-调度' && !DELEGATION_RE.test(flat)) {
       return { block: null, latePending: false }
     }
     const cached = this.recallMemo.get(rootMessageId)
@@ -1191,7 +1191,7 @@ export class RoomRelay {
       if (size < cap.anchorBytes) return this.readSessionDelta(session, cap.beforeCount) // 轮换/截断
       if (size === cap.lastSize && cap.cachedDelta) return cap.cachedDelta // stat 快路径：零读盘
       // 增量区上限 4MB：马拉松任务锚后增量过大时只读尾段（行首对齐），丢的是最早增量——
-      // 捕获正文本就截 CAPTURE_TEXT_MAX，唯一代价是超早段的 areco-msg 主动回执标记可能漏检
+      // 捕获正文本就截 CAPTURE_TEXT_MAX，唯一代价是超早段的 audicode-msg 主动回执标记可能漏检
       //（低概率重复回执，危害远小于每拍全量读）
       const INCR_MAX = 4 * 1024 * 1024
       const from = Math.max(cap.anchorBytes, size - INCR_MAX)
@@ -1247,15 +1247,15 @@ export class RoomRelay {
         continue
       }
       const delta = this.captureDelta(session, cap)
-      // agent 已主动回执（areco-msg）：只认 assistant 侧的 text/tool_use → 不自动（避免双重回执）。
-      // 注入的 note 本身含 areco-msg 命令，会作为 user 消息落进 transcript，不排除则首个
+      // agent 已主动回执（audicode-msg）：只认 assistant 侧的 text/tool_use → 不自动（避免双重回执）。
+      // 注入的 note 本身含 audicode-msg 命令，会作为 user 消息落进 transcript，不排除则首个
       // captureTick 即误判「已回执」删掉 pendingCapture，自动捕获永远不触发。
       const alreadyReplied = delta.some(
         (m) =>
           m.role === 'assistant' &&
           m.parts.some((p) => {
-            if (p.kind === 'tool_use') return /areco-msg/.test(p.input)
-            if (p.kind === 'text') return /areco-msg/.test(p.text)
+            if (p.kind === 'tool_use') return /audicode-msg/.test(p.input)
+            if (p.kind === 'text') return /audicode-msg/.test(p.text)
             return false
           })
       )
@@ -1291,7 +1291,7 @@ export class RoomRelay {
           if (room) {
             this.cursors.set(room.id, Math.max(this.cursors.get(room.id) ?? 0, stored.id))
             this.broadcast({ type: 'roomMessage', roomId: room.id, message: this.toRoomMessage(room, stored) })
-            // 自动捕获的回复同样过统一后处理：serial 房间靠它推进轮转（agent 没跑 areco-msg 也能轮到下一位）
+            // 自动捕获的回复同样过统一后处理：serial 房间靠它推进轮转（agent 没跑 audicode-msg 也能轮到下一位）
             this.onMessageStored(room, stored)
             this.refreshContext(room)
           }

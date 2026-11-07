@@ -78,7 +78,7 @@ async function main() {
     const good = await req('POST', '/login', { form: { password: PASSWORD, next: '/' } })
     const setCookie = good.headers.get('set-cookie') || ''
     cookie = setCookie.split(';')[0]
-    report('正确密码 303 + cookie', good.status === 303 && cookie.includes('areco_session='))
+    report('正确密码 303 + cookie', good.status === 303 && cookie.includes('audicode_session='))
     const unauth = await fetch(BASE + '/api/sessions')
     report('无 cookie 访问 API 401', unauth.status === 401)
   }

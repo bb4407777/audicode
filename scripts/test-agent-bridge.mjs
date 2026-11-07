@@ -1,5 +1,5 @@
 // agent-bridge 端到端实测（真模型，隔离 HERMES_HOME，不动生产）。
-// 用法：cd <areco 仓根> && node scripts/test-agent-bridge.mjs
+// 用法：cd <audicode 仓根> && node scripts/test-agent-bridge.mjs
 //
 // 流程：esbuild 把 TS client 打包到 /tmp（测的就是要上线的代码，不是复制品）
 //   → manager spawn sidecar → 用例 A 纯对话流式 → 用例 B interrupt

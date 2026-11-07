@@ -1,4 +1,4 @@
-# Areco voice
+# Audicode voice
 
 仅提供回环 `127.0.0.1:8792` 的 TTS sidecar：`GET /healthz`、`POST /synthesize`。
 输出固定为 24kHz、单声道、PCM16 little-endian 原始流；不含 ASR、VAD、麦克风或 Hermes 客户端。

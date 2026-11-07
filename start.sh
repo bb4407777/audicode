@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Areco 生产启停：pid 文件 + 身份校验（绝不按端口杀无辜进程）
+# Audicode 生产启停：pid 文件 + 身份校验（绝不按端口杀无辜进程）
 # 用法: ./start.sh {start|stop|restart|status}
 set -u
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-PID_FILE="$REPO_DIR/data/areco.pid"
+PID_FILE="$REPO_DIR/data/audicode.pid"
 # 改名前的旧 pid 文件：新名不存在而旧名在时沿用，防止改名后第一次 stop 找不到活进程
 [ ! -f "$PID_FILE" ] && [ -f "$REPO_DIR/data/agent-remote.pid" ] && PID_FILE="$REPO_DIR/data/agent-remote.pid"
 LOG_DIR="$REPO_DIR/data/logs"
@@ -75,7 +75,7 @@ do_start() {
   [ -f "$REPO_DIR/$ENTRY" ] || { echo "缺少 ${ENTRY}，先 npm run build"; return 1; }
   [ -n "$NODE_BIN" ] || { echo "找不到 node"; return 1; }
 
-  echo "启动 Areco…（node: ${NODE_BIN}）"
+  echo "启动 Audicode…（node: ${NODE_BIN}）"
   nohup "$NODE_BIN" "$ENTRY" >> "$LOG_FILE" 2>&1 &
   local new_pid=$!
   echo "$new_pid" > "$PID_FILE"
@@ -139,8 +139,8 @@ do_stop() {
   echo "已停止"
 }
 
-# 新旧 launchd label 兼容：优先 com.areco，旧机器上还是 com.agent-remote
-LAUNCHD_TARGET="gui/$(id -u)/com.areco"
+# 新旧 launchd label 兼容：优先 com.audicode，旧机器上还是 com.agent-remote
+LAUNCHD_TARGET="gui/$(id -u)/com.audicode"
 launchctl print "$LAUNCHD_TARGET" >/dev/null 2>&1 || LAUNCHD_TARGET="gui/$(id -u)/com.agent-remote"
 LAUNCHD_LABEL="${LAUNCHD_TARGET##*/}"
 LAUNCHD_PLIST="$HOME/Library/LaunchAgents/${LAUNCHD_LABEL}.plist"

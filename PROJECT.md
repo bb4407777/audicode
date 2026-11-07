@@ -1,4 +1,4 @@
-# areco 驻场工作纪要
+# audicode 驻场工作纪要
 
 > 多 agent 交接上下文。新条目在最上、带日期。对外说明以 SKILL.md 为准，本文件只放工作过程记录。
 
@@ -9,13 +9,13 @@
 - **查找（终态：跨会话、新→旧）**：头部搜索框**输入即搜**（防抖 300ms），服务端 `GET /api/weixin/search?q=` 跨全部微信会话搜正文——SQL 只搜 `role IN ('user','assistant')` 的 content，**不搜 tool 角色与 tool_calls**（初版双列 LIKE 命中 75% 是工具 JSON 噪音，按「搜索匹配不准确」反馈收窄；`%_` ESCAPE 字面化），按消息时间新→旧返回 ≤100 条。命中自动跳对应会话并滚动到关键词：全部命中黄底 `mark.hl`、当前命中红底白字 `mark.hl-now`；定位 = timestamp±1s + role + text 段含词三重匹配（只看 text part——工具折叠块不高亮、不参与定位）。**回车/↑ = 更早的命中，↓ = 更新的命中**（循环、n/N 计数；08-05 收尾时修正 ↑/↓ tooltip 与两处注释文案方向写反的笔误，行为未动）。ChatMessage.vue 新增可选 `highlight`/`highlightActive` prop（不传零影响其他页面），高亮在 md 渲染（html:false 已转义）之后做标签感知替换、只碰标签间纯文本。
 - **全量加载 + 分页 bug 根修**：打开会话即 `before=start` 链式向前翻完所有页（删「加载更早」按钮）。根因：前端原用 `cursor=N` 续页，而服务端 paginate 协议是首页 cursor=0、后续必须 `before=start`——cursor=132 时 slice(132)=空数组，132 条永远只显示尾页 80 条。修后实测 132/132 全量可见。
 - **验证**：`npm run build`（vue-tsc+vite+server）全过；tsx 直调服务实测角色过滤/通配符字面化/空词空返回。08-05 收尾线上核验：8790 已于 13:47 重启（携新端点，无重启遗留）——工具专属词 `tbliXPMNN3`/`DatabaseSync` 实测 0 命中、正文词正常命中；dist server bundle 含 `/weixin/search`、client chunk 含 `hl-now`。
-- **改动 5 文件，deploy 树与 dev 仓 `/Users/gao/Code/StandCode/areco/` 已逐字同步、均未 commit**：WeixinView.vue、ChatMessage.vue、services/weixin-sessions.ts、controllers/weixin.ts、routes/api.ts。**下次向 deploy rsync/部署前先在 dev 仓 commit 这 5 个文件，否则搜索功能会被旧产物覆盖。**
+- **改动 5 文件，deploy 树与 dev 仓 `/Users/gao/Code/StandCode/audicode/` 已逐字同步、均未 commit**：WeixinView.vue、ChatMessage.vue、services/weixin-sessions.ts、controllers/weixin.ts、routes/api.ts。**下次向 deploy rsync/部署前先在 dev 仓 commit 这 5 个文件，否则搜索功能会被旧产物覆盖。**
 
 ### 2026-08-01 Hermes：角色统一 + 新建会话固定模板 + 自动保存
 - 高律师令：角色统一为 Caller/Thinker/Worker（快速/重活 Worker 退役，重活并入 Thinker=kimi-k3）；新建会话去掉角色模式只留模板；角色设置改完自动保存（删保存按钮）
 - 改动（dev 仓 commit）：SpawnDialog.vue 重写为纯模板；SettingsView.vue 角色砍 3 行+@update:value 自动保存+删新建会话模式选项；ui.ts 默认 spawnMode=template 且不再读服务端残留键+删 setSpawnMode；useSpawnWorker.ts HANDOFF_ROLES 砍两档
 - 服务端：PUT /api/standcode/defaults 清 fastWorker/heavyWorker+thinker 锚 kimi-k3（写 deploy config.json 即时生效，无需重启）
-- **关键教训：8790 服务真身是 StandCode-deploy/areco（部署副本），不是 dev 仓！前端 build 后必须 rsync dist/client 到 deploy 才生效；vite build 须在仓根跑（monorepo）**
+- **关键教训：8790 服务真身是 StandCode-deploy/audicode（部署副本），不是 dev 仓！前端 build 后必须 rsync dist/client 到 deploy 才生效；vite build 须在仓根跑（monorepo）**
 - 验收：bundle grep 旧字符串 0 匹配；8790 实测吐新 chunk；config 三向回读一致
 
 
@@ -23,7 +23,7 @@
 - **报障**：kimi 卡片对话模式一直空白。根因链：用户走「历史→kimi→恢复」，api.ts 只传 `extraArgs:['-S',id]` **不传 resumeAgentSessionId**→卡片 agentSessionId=null→kimi `-S` 续写的是旧 wire.jsonl（birth 在本卡启动前 80 分钟）→locate 时间窗认亲（startedAt±60s）永远排除它→transcript 永远 exists:false。日志实锤：locate 每 750ms 双行刷屏「未找到」（ff490705）。
 - **修法（commit 76ffc87，3 文件 +40）**：① historyResume kimi/codex 传 `resumeAgentSessionId`，spawn 对非 workbuddy harness 也 `bindAgentSession`（复用重复绑定守卫）；② restart(resume) kimi/codex 从定位文件推出 sid 后回写绑定（否则恢复换 epoch 后同样丢档）；③ codex 附带修：resume 用**同一 session id 回放历史写新 rollout**（磁盘实证 1 id×4 文件），locate 同 id 多文件旧序取最旧=恢复后冻结，改为取最新 + 运行中缓存命中 epoch 前出生文件视为陈旧重扫。
 - **验证**：211 测试全过、typecheck 过；staged 内容在临时 worktree 独立编译过（工作区满是并行 WIP，用 `git apply --cached` 选择性提交，**P2-10 退避/harness 字段/ENOENT 降噪等他人未提交 hunk 一律未动**——其中 agent-transcript.ts 有一个我的+P2-10 熔合 hunk 是手拆的）。存量 6 卡（qclaw×2/workbuddy×2/claude×2）transcript API 全部有内容。
-- **部署**：deploy 分支 ff 到 76ffc87、deploy 树已 build。因本会话自身跑在 areco pty 里（kickstart=自杀），走 detached 脚本 `data/deploy-restart-verify-20260801.sh`：等全卡空闲（≤30min）→kickstart→API 恢复 kimi 历史会话 session_e433091e（用户被删卡片的原对话）→验证预绑定+transcript 非空，结果写 `data/logs/deploy-verify-20260801.log`。
+- **部署**：deploy 分支 ff 到 76ffc87、deploy 树已 build。因本会话自身跑在 audicode pty 里（kickstart=自杀），走 detached 脚本 `data/deploy-restart-verify-20260801.sh`：等全卡空闲（≤30min）→kickstart→API 恢复 kimi 历史会话 session_e433091e（用户被删卡片的原对话）→验证预绑定+transcript 非空，结果写 `data/logs/deploy-verify-20260801.log`。
 - **遗留**：reasonix historyResume 走交互 `--resume` 选择器无法预置 id，同样的时间窗洞理论存在；本机无任何 reasonix 会话数据，未盲修。kimi 二进制 08-01 11:42 自更新过，本次空白与其无关（wire 格式未变）。
 - **教训**：凡「原生恢复续写旧文件」的 agent（kimi wire 追加、codex 同 id 换文件），绑定都不能靠时间窗事后认亲，必须在 spawn/restart 时把确定性 id 钉进卡片。
 
@@ -33,8 +33,8 @@
 - **教训**：共库并行期 `git status -- <file>` 无 diff ≠ 没改上，先 `git log -1 --format=%ci -- <file>` 查是否刚被别人捎带提交；两个 Hermes 会话同接一条微信指令时，完工后先看 PROJECT.md 是否已有对方条目，补订正不覆盖。
 
 ### 2026-07-31 设置页「Agent 模板移到对话模式下方」= 现状已满足（Hermes）
-- **经过**：高律师 11:0x 令把 Agent 模板挪到对话模式下面。排查发现 8790 一直在吃**旧 dist**（src 旧树 `areco/web/`，板块顺序 Agent模板在对话模式上）；11:10 并行接力会话从 `packages/client` 重跑 `npm run build`，新产物上线后实页顺序已为 系统→StandCode默认角色→对话模式→**Agent模板**→输入诊断，无需我再改。
-- **架构定谳**：areco 前端源码 SoT = `areco/packages/client/`（git 跟踪，e271049 起）；`areco/web/` 旧树 07-31 上午已被移除——**别再读/改 web/，看到即 stale**。构建 = areco 根 `npm run build`（typecheck+vite+build-server），产物 `areco/dist/client`，纯前端硬刷生效无需重启 8790。
+- **经过**：高律师 11:0x 令把 Agent 模板挪到对话模式下面。排查发现 8790 一直在吃**旧 dist**（src 旧树 `audicode/web/`，板块顺序 Agent模板在对话模式上）；11:10 并行接力会话从 `packages/client` 重跑 `npm run build`，新产物上线后实页顺序已为 系统→StandCode默认角色→对话模式→**Agent模板**→输入诊断，无需我再改。
+- **架构定谳**：audicode 前端源码 SoT = `audicode/packages/client/`（git 跟踪，e271049 起）；`audicode/web/` 旧树 07-31 上午已被移除——**别再读/改 web/，看到即 stale**。构建 = audicode 根 `npm run build`（typecheck+vite+build-server），产物 `audicode/dist/client`，纯前端硬刷生效无需重启 8790。
 - **本轮零改动零提交**（并行会话 WIP 满工作区，不抢 commit）。
 
 ### 2026-07-31 「＋新建会话→＋worker」接力验收（Hermes）

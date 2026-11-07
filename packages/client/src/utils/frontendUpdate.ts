@@ -56,7 +56,7 @@ export async function checkFrontendUpdate() {
   try {
     const current = loadedEntryAsset()
     if (!current) return
-    const res = await fetch(`/?__areco_update=${Date.now()}`, {
+    const res = await fetch(`/?__audicode_update=${Date.now()}`, {
       cache: 'no-store',
       credentials: 'same-origin',
       headers: { Accept: 'text/html' },

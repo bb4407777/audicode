@@ -1,7 +1,7 @@
-// Hermes 微信会话只读视图（2026-08-04 作业单 A：areco 只读接入微信会话）
+// Hermes 微信会话只读视图（2026-08-04 作业单 A：audicode 只读接入微信会话）
 //
-// 只做一件事：让 areco 座舱「看见」微信会话——只读 Hermes state.db 里的 source='weixin'
-// 会话与消息，按 areco transcript 形状（{role,parts[],timestamp}）返回，不改任何本地表。
+// 只做一件事：让 audicode 座舱「看见」微信会话——只读 Hermes state.db 里的 source='weixin'
+// 会话与消息，按 audicode transcript 形状（{role,parts[],timestamp}）返回，不改任何本地表。
 //
 // 纪律（对齐 hermes-studio session-sync.ts 与本仓 hermes-handoff.ts）：
 //   - Hermes state.db 永远只读、禁止回填。本服务经 node:sqlite DatabaseSync 的
@@ -15,7 +15,7 @@
 //   - 坑3 tool 消息 content 是 JSON 串 {"output":...,"exit_code":...}，需解包取 output、
 //     按 exit_code 判 isError（hermes-handoff 直接把原串当 text）；
 //   - 坑4 大量 assistant 消息 content 为空、正文在 tool_calls 里，需展开成 tool_use part；
-//   - session_meta 角色丢弃（weixin active 12 条，无 areco 对应概念）。
+//   - session_meta 角色丢弃（weixin active 12 条，无 audicode 对应概念）。
 import { DatabaseSync } from 'node:sqlite'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -143,7 +143,7 @@ export function readWeixinTranscript(
   }
 }
 
-/** state.db 消息行 → areco transcript 消息。 */
+/** state.db 消息行 → audicode transcript 消息。 */
 function toMessage(row: Record<string, unknown>): TranscriptMessage | null {
   const role = typeof row.role === 'string' ? row.role : ''
   const content = typeof row.content === 'string' ? row.content : ''
@@ -170,13 +170,13 @@ function toMessage(row: Record<string, unknown>): TranscriptMessage | null {
       if (reasoning) parts.push({ kind: 'text', text: clip('<reasoning> ' + reasoning, MAX_PART_TEXT) })
     }
   } else if (role === 'tool') {
-    // 坑5：tool 角色 → areco 里 tool_result 挂在 user 角色下（Anthropic 约定，同 hermes-handoff.ts）。
+    // 坑5：tool 角色 → audicode 里 tool_result 挂在 user 角色下（Anthropic 约定，同 hermes-handoff.ts）。
     // 坑3：tool content 是 JSON 串 {"output":...,"exit_code":...,"error":...}——解包取 output、
     // 按 exit_code 判 isError（exit_code 130 → true；0 → false；带 error → true）。
     const { text, isError } = unpackToolContent(content)
     parts.push({ kind: 'tool_result', text: clip(text, MAX_TOOL_TEXT), isError })
   } else {
-    // session_meta 等无 areco 对应概念，丢弃（weixin active 12 条）
+    // session_meta 等无 audicode 对应概念，丢弃（weixin active 12 条）
     return null
   }
 

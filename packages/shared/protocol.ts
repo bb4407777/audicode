@@ -58,7 +58,7 @@ export interface Template {
 }
 
 /**
- * StandCode 角色默认模板映射（areco 设置页编辑，config.json 的 standcode 段）。
+ * StandCode 角色默认模板映射（audicode 设置页编辑，config.json 的 standcode 段）。
  * 值 = 模板 id；字段缺省/空串 = 未设置，消费方（StandCode caller.py）回落 registry.json。
  */
 export interface StandCodeConfig {
@@ -67,7 +67,7 @@ export interface StandCodeConfig {
   worker?: string
   fastWorker?: string
   /** 重活车道锚（法律/代码重活 Worker）。2026-07-30 高律师定案：车道锚 SoT 统一迁到
-   *  本段（areco 设置页），caller.py 每次 go 运行时读取，回落链 API→config.json→常量。 */
+   *  本段（audicode 设置页），caller.py 每次 go 运行时读取，回落链 API→config.json→常量。 */
   heavyWorker?: string
 }
 

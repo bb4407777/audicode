@@ -18,7 +18,7 @@ export interface TtsServiceOptions {
   fetchImpl?: typeof fetch
 }
 
-/** 懒启动 areco 自己的 sidecar；只管理本类创建的子进程。 */
+/** 懒启动 audicode 自己的 sidecar；只管理本类创建的子进程。 */
 export class TtsService {
   private readonly voiceDir: string
   private readonly python?: string
@@ -96,7 +96,7 @@ export class TtsService {
       })
       if (!response.ok) return false
       const body = await response.json() as { service?: unknown }
-      return body.service === 'areco-tts'
+      return body.service === 'audicode-tts'
     } catch {
       return false
     }

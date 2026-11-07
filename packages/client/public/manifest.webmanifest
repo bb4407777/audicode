@@ -1,7 +1,7 @@
 {
-  "name": "Areco",
-  "short_name": "Areco",
-  "id": "/?areco",
+  "name": "Audicode",
+  "short_name": "Audicode",
+  "id": "/?audicode",
   "description": "CLI Agent 网页远程座舱与语音播报",
   "start_url": "/",
   "display": "standalone",

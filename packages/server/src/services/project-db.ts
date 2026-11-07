@@ -4,7 +4,7 @@
 // 因此无 rooms.json 的环境行为与旧单库完全一致。
 // id 永不相撞：存量来自原单库（id 天然唯一）；新增侧 projects.db 三张自增表的起点 seed 到
 // 10_000_000（openFor 建库与迁移脚本双保险），tasks.db 自然增长——按 id 的查询两库顺查即可。
-// 服务端 room-relay 读写；本机任何终端可用 scripts/areco-msg.mjs 直写回执（同路由规则）——
+// 服务端 room-relay 读写；本机任何终端可用 scripts/audicode-msg.mjs 直写回执（同路由规则）——
 // WAL + busy_timeout 保证与服务端并发安全，relay 的 2s 游标轮询自然拾取。
 import fs from 'node:fs'
 import path from 'node:path'
@@ -46,7 +46,7 @@ CREATE INDEX IF NOT EXISTS idx_team_history ON messages(team, id);
 CREATE INDEX IF NOT EXISTS idx_team_created ON messages(team, created_at);
 -- 房间调度底账（确定性房间调度，2026-07-22）：消息可见性与行动许可拆开。
 -- message_targets 记录每条消息的真实收件人集合（广播也展开成成员名逐行落），
--- 替代单一 to_agent 的审计盲区；messages.to_agent 保留不动，兼容旧数据与 areco-msg CLI。
+-- 替代单一 to_agent 的审计盲区；messages.to_agent 保留不动，兼容旧数据与 audicode-msg CLI。
 CREATE TABLE IF NOT EXISTS message_targets (
   message_id INTEGER NOT NULL,
   target_name TEXT NOT NULL,
@@ -85,12 +85,12 @@ CREATE TABLE IF NOT EXISTS delivery (
 // 原先每个 open() 都跑：mkdir + 5 条 CREATE TABLE IF NOT EXISTS + 1 索引 + 2 次
 // PRAGMA table_info 迁移探测。而 RoomRelay.tick 每 2 秒对每个房间调 history()（当前 39 个
 // 房间，其中 23 个已归档），sweepTimeouts 再来一轮 —— 折算约 40 次/秒的全量 DDL，
-// 打在一个 CLI 侧（areco-msg.mjs）也在并发写的库上。功能上能跑，但纯属浪费，
+// 打在一个 CLI 侧（audicode-msg.mjs）也在并发写的库上。功能上能跑，但纯属浪费，
 // 且是房间数增长后 WAL 争用的第一个源头。
 //
 // P2-10（2026-07-30）：短连接进一步升级为进程级共享长连接。tick 每秒对每个活跃房间
 // history() 一次，每次新开连接（open+PRAGMA+close）纯属固定税；WAL 下服务端长连接与
-// CLI 侧（areco-msg.mjs）短连接并发互不阻塞（reader 不挡 writer，writer 锁有
+// CLI 侧（audicode-msg.mjs）短连接并发互不阻塞（reader 不挡 writer，writer 锁有
 // busy_timeout=3000 兜底）。调用点的 finally db.close() 全部改为空操作注释——
 // 单例连接随进程存亡，SQLite 进程退出自动释放。
 const sharedDbs: Record<DbKind, DatabaseSync | null> = { task: null, project: null }

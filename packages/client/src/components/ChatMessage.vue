@@ -75,7 +75,7 @@ const visibleParts = computed(() =>
 )
 
 // AskUserQuestion / request_user_input 等多选询问：解析成可点击选项卡片。
-// 修桥接 WorkBuddy 会话在 areco 看不到选项按钮、只能去桌面端点的问题——这里直接渲染并回传答案。
+// 修桥接 WorkBuddy 会话在 audicode 看不到选项按钮、只能去桌面端点的问题——这里直接渲染并回传答案。
 const ASK_NAMES = ['askuserquestion', 'ask_user_question', 'request_user_input', 'requestuserinput']
 function isAskName(name: unknown): boolean {
   const n = String(name ?? '').toLowerCase()
@@ -253,7 +253,7 @@ function highlightInHtml(html: string, kw: string, active: boolean): string {
             <pre>{{ part.text }}</pre>
           </details>
         </template>
-        <!-- WorkBuddy AskUserQuestion 等多选询问：渲染为可点击选项卡片（桥接会话在 areco 也能直接选） -->
+        <!-- WorkBuddy AskUserQuestion 等多选询问：渲染为可点击选项卡片（桥接会话在 audicode 也能直接选） -->
         <div v-for="(block, bi) in askUserBlocks" :key="'ask' + bi" class="ask-block">
           <div v-if="block.header" class="ask-header">{{ block.header }}</div>
           <div class="ask-q">{{ block.question }}</div>

@@ -56,7 +56,7 @@ const DEFAULT_SERVER: ServerConfig = {
   port: 8790,
   passwordHash: '',
   sessionTtlHours: 72,
-  title: 'Areco',
+  title: 'Audicode',
   allowedHosts: [],
   maxSessions: 0,
   insecureNoAuth: false,
@@ -71,11 +71,11 @@ export const CONFIG_PATH = path.join(ROOT_DIR, 'config.json')
 
 /**
  * 包内资源探测。ARECO_ROOT 只指数据根，不是代码根——npm 安装（尤其 -g）时 cwd 是用户
- * 任意目录，代码资源（dist/client、config.example.json、scripts/areco-msg.mjs）都在包目录。
+ * 任意目录，代码资源（dist/client、config.example.json、scripts/audicode-msg.mjs）都在包目录。
  * 候选顺序：ROOT_DIR（仓库根跑 = 老行为不变）→ 进程入口推 bundle 布局（dist/server→包根）
  * → dev 布局（packages/server/src→仓库根），取第一个存在的；全不存在返回首个候选。
  */
-/** 进程入口真实目录：npm bin 软链（.bin/areco → dist/server/index.cjs）下 argv[1] 是
+/** 进程入口真实目录：npm bin 软链（.bin/audicode → dist/server/index.cjs）下 argv[1] 是
  *  链接位置，必须 realpath 才能推出真实包布局（2026-07-23 外机冒烟实测踩中） */
 export const ENTRY_DIR = (() => {
   let entryFile = process.argv[1] ?? ''
@@ -96,13 +96,13 @@ function nearEntry(...segments: string[]): string {
   return candidates.find((p) => fs.existsSync(p)) ?? candidates[0]!
 }
 
-/** 回执 CLI（scripts/areco-msg.mjs）的绝对路径 */
-export const MSG_CLI_PATH = nearEntry('scripts', 'areco-msg.mjs')
+/** 回执 CLI（scripts/audicode-msg.mjs）的绝对路径 */
+export const MSG_CLI_PATH = nearEntry('scripts', 'audicode-msg.mjs')
 
 /** 前端构建产物目录（npm 安装时在包内，不在数据根） */
 export const CLIENT_DIR = nearEntry('dist', 'client')
 
-/** 独立 TTS sidecar 源码目录；不读取 areco/hermes-live 的配置或模型。 */
+/** 独立 TTS sidecar 源码目录；不读取 audicode/hermes-live 的配置或模型。 */
 export const VOICE_DIR = nearEntry('voice')
 
 function normalizeTemplate(raw: Partial<Template>, index: number): Template {

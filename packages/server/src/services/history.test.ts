@@ -7,7 +7,7 @@ import { kimiEntries, kimiParseLine, kimiWorkDirOf, readHistoryPage, resolveKimi
 
 /** 造一个 kimi 落盘 fixture：<tmp>/sessions/<wd>/<sessionId>/{state.json, agents/main/wire.jsonl} */
 function kimiFixture(): { root: string; wd: string; sid: string; wire: string } {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-kimi-history-'))
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-kimi-history-'))
   const wd = 'wd_test_abc123'
   const sid = 'session_0a1b2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d'
   const sessionDir = path.join(root, wd, sid)
@@ -117,7 +117,7 @@ test('readHistoryPage pages kimi wire with kimiParseLine (tail-first, byte curso
 })
 
 test('readHistoryPage 半截行 bail 不消费未写完数据（end 退到完整行边界）', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-history-half-'))
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-history-half-'))
   try {
     const f = path.join(dir, 's.jsonl')
     const line = JSON.stringify({ type: 'user', message: { content: '第一条' } })
@@ -139,7 +139,7 @@ test('readHistoryPage 半截行 bail 不消费未写完数据（end 退到完整
 })
 
 test('readHistoryPage 单行超 8MB：游标退到块前、hasMore 诚实，可跳过继续向前翻', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-history-giant-'))
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-history-giant-'))
   try {
     const f = path.join(dir, 's.jsonl')
     const first = JSON.stringify({ type: 'user', message: { content: '早' } }) + '\n'

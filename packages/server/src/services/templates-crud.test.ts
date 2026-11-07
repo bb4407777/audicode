@@ -15,7 +15,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-tpl-crud-'))
+const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-tpl-crud-'))
 process.env.ARECO_ROOT = tmpRoot
 
 const { TemplateStore } = await import('./templates')

@@ -6,7 +6,7 @@ import { api } from '../api'
 export const useSessionsStore = defineStore('sessions', {
   state: () => ({
     ready: false,
-    title: 'Areco',
+    title: 'Audicode',
     serverVersion: '',
     cleanupExitedSupported: false,
     sessions: [] as SessionSummary[],

@@ -67,7 +67,7 @@ export const useRoomsStore = defineStore('rooms', {
 
     loadReadState() {
       try {
-        this.lastRead = JSON.parse(localStorage.getItem('areco-room-read') ?? '{}')
+        this.lastRead = JSON.parse(localStorage.getItem('audicode-room-read') ?? '{}')
       } catch {
         this.lastRead = {}
       }
@@ -76,7 +76,7 @@ export const useRoomsStore = defineStore('rooms', {
       const list = this.messages[roomId]
       if (!list?.length) return
       this.lastRead[roomId] = list[list.length - 1].id
-      localStorage.setItem('areco-room-read', JSON.stringify(this.lastRead))
+      localStorage.setItem('audicode-room-read', JSON.stringify(this.lastRead))
     },
 
     async refresh() {

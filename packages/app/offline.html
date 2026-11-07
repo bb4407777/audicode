@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>areco - 连接中</title>
+  <title>audicode - 连接中</title>
   <style>
     body {
       margin: 0;
@@ -37,13 +37,13 @@
   </style>
 </head>
 <body>
-  <h1>areco</h1>
-  <p id="tip">正在连接 areco 服务…</p>
+  <h1>audicode</h1>
+  <p id="tip">正在连接 audicode 服务…</p>
   <div class="spin"></div>
   <button id="retry">立即重试</button>
   <script>
     const target = new URLSearchParams(location.search).get('url') || 'http://127.0.0.1:8790'
-    document.getElementById('tip').textContent = `正在连接 areco 服务（${target}）…`
+    document.getElementById('tip').textContent = `正在连接 audicode 服务（${target}）…`
 
     async function tryConnect() {
       try {

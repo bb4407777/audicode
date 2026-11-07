@@ -6,7 +6,7 @@ import { createLogger } from '../logger'
 
 const log = createLogger('auth')
 
-export const SESSION_COOKIE = 'areco_session'
+export const SESSION_COOKIE = 'audicode_session'
 const CLEANUP_INTERVAL_MS = 10 * 60 * 1000
 
 export function parseCookies(header: string | undefined): Map<string, string> {

@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 import { getUiPrefs, putUiPrefs } from '../api'
 
-const LS_KEY = 'areco-ui'
+const LS_KEY = 'audicode-ui'
 // 改名前的旧键，读不到新键时迁移一次
 const LEGACY_LS_KEY = 'agent-remote-ui'
 

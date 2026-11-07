@@ -553,9 +553,9 @@ export class WorkBuddyPtyAdapter {
   enqueue(text) {
     const prompt = String(text || "").trim();
     if (!prompt) return Promise.resolve();
-    // 回显必须在入队时立即发生，不能等队列轮到（原在 runPrompt 首行）：areco 注入靠
+    // 回显必须在入队时立即发生，不能等队列轮到（原在 runPrompt 首行）：audicode 注入靠
     // pty 输出里的 nonce 回显判送达（ECHO_VERIFY_MS 内不见即重发、多次后放弃）——
-    // 前一回合执行中时新注入的回显被队列压住，areco 必判吞没，重发的 N 份还会全部
+    // 前一回合执行中时新注入的回显被队列压住，audicode 必判吞没，重发的 N 份还会全部
     // 进队列，回合结束后重复执行 N 遍。立即回显 = 指令确已入队，账实相符。
     this.print(`> ${prompt}`);
     const task = this.queue.then(() => this.runPrompt(prompt));

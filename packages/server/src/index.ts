@@ -34,7 +34,7 @@ const log = createLogger('server')
 
 // npm 安装会丢 node-pty spawn-helper 的可执行位（macOS 上表现为 posix_spawnp failed），启动时自修复。
 // node-pty 位置按三种布局探测：仓库根跑（ROOT_DIR/node_modules）、npm 顶层提升
-// （node_modules/areco 的兄弟 node-pty）、包内嵌套（包根/node_modules）——修不到则会话 spawn 全挂
+// （node_modules/audicode 的兄弟 node-pty）、包内嵌套（包根/node_modules）——修不到则会话 spawn 全挂
 function repairSpawnHelper() {
   const entry = ENTRY_DIR
   const bases = [
@@ -186,7 +186,7 @@ async function main() {
   const { host, port } = config.server
   server.listen(port, host, () => {
     const urls = getAccessUrls(port)
-    log.info(`Areco v${version} 监听 ${host}:${port}（认证：${auth.enabled ? '已启用' : '未启用（仅 loopback）'}）`)
+    log.info(`Audicode v${version} 监听 ${host}:${port}（认证：${auth.enabled ? '已启用' : '未启用（仅 loopback）'}）`)
     log.info(`本机: http://127.0.0.1:${port}/`)
     for (const u of urls.lan) log.info(`局域网: ${u}/`)
     for (const u of urls.tailscale) log.info(`Tailscale: ${u}/`)

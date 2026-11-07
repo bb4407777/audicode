@@ -4,12 +4,12 @@
 #
 #   bash scripts/backup-msg-dbs.sh          # 备份 tasks.db + projects.db 并轮转
 #
-# sqlite3 .backup 在线安全备份（不锁库、与 WAL 并发安全）；落 ~/.backups/areco-db/，
+# sqlite3 .backup 在线安全备份（不锁库、与 WAL 并发安全）；落 ~/.backups/audicode-db/，
 # 每库保留最近 7 份。挂 cc-connect cron 每日执行由高律师定（本脚本幂等，随时手跑）。
 set -euo pipefail
 
-DATA_DIR="${ARECO_DATA_DIR:-/Users/gao/Code/areco/data}"
-DEST="${ARECO_DB_BACKUP_DIR:-/Users/gao/.backups/areco-db}"
+DATA_DIR="${ARECO_DATA_DIR:-/Users/gao/Code/audicode/data}"
+DEST="${ARECO_DB_BACKUP_DIR:-/Users/gao/.backups/audicode-db}"
 KEEP=7
 STAMP=$(date +%Y%m%d-%H%M)
 

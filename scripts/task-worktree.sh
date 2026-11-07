@@ -18,7 +18,7 @@
 set -euo pipefail
 
 MAIN=/Users/gao/Code/StandCode
-LINKS=(areco/data areco/config.json areco/bin standcode/data \
+LINKS=(audicode/data audicode/config.json audicode/bin standcode/data \
        standcode/config/harnesses.json standcode/config/providers.json standcode/config/local.json)
 
 die() { echo "❌ $*" >&2; exit 1; }
@@ -41,7 +41,7 @@ new)
   [ -e "$T" ] && die "$T 已存在(换 id 或先 drop)"
   git -C "$MAIN" worktree add -b "$B" "$T" main
   for p in "${LINKS[@]}"; do ln -s "$MAIN/$p" "$T/$p"; done
-  ln -s "$MAIN/areco/node_modules" "$T/areco/node_modules"
+  ln -s "$MAIN/audicode/node_modules" "$T/audicode/node_modules"
   echo "✅ 任务树就绪: $T (分支 $B)"
   echo "   改码 → git commit → $0 land $id"
   ;;

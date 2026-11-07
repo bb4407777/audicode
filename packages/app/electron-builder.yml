@@ -1,5 +1,5 @@
-appId: com.areco.app
-productName: areco
+appId: com.audicode.app
+productName: audicode
 directories:
   buildResources: build
   output: dist
@@ -13,6 +13,6 @@ mac:
   icon: icon.icns
   notarize: false
   extendInfo:
-    CFBundleDisplayName: areco
+    CFBundleDisplayName: audicode
 dmg:
   artifactName: ${name}-${version}-${arch}.${ext}

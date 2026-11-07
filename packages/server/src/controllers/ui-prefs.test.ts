@@ -9,7 +9,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-ui-prefs-'))
+const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-ui-prefs-'))
 process.env.ARECO_ROOT = tmpRoot
 
 const { ApiControllers } = await import('./api')

@@ -3,8 +3,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { ROOT_DIR } from '../config'
 
-// StandCode 调度层根：2026-07-30 monorepo 分层（仓根 = standcode/ + areco/ 平级）后，
-// ROOT_DIR 是 areco 层根（cwd=areco/），standcode/ 在其**上一级**；旧布局（ROOT_DIR 直接
+// StandCode 调度层根：2026-07-30 monorepo 分层（仓根 = standcode/ + audicode/ 平级）后，
+// ROOT_DIR 是 audicode 层根（cwd=audicode/），standcode/ 在其**上一级**；旧布局（ROOT_DIR 直接
 // 含 standcode/）与 npm 安装场景仍兼容——逐层探，探到谁用谁。
 export function standcodeRoot(): string {
   if (process.env.STANDCODE_ROOT) return process.env.STANDCODE_ROOT
@@ -16,7 +16,7 @@ export function standcodeRoot(): string {
 // 配置目录可覆盖：2026-07-26 StandCode 已 subtree 并入本仓 standcode/，默认直接读
 // 仓内 standcode/config（经 standcodeRoot 定位，同仓自证），
 // 不再依赖仓外物理路径——那正是此前「换台机器整层静默失效」的根源。
-// 2026-09-13 StandCode 组件退役、areco 扁平化至仓根后，运行配置迁居仓根 config/
+// 2026-09-13 StandCode 组件退役、audicode 扁平化至仓根后，运行配置迁居仓根 config/
 // （harnesses/providers/local/models/presets），探到 harnesses.json 即采用，
 // 探不到再回落旧 standcode 布局（npm 安装/旧仓场景兼容）。
 const STANDCODE_CONFIG_DIR =

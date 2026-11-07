@@ -51,7 +51,7 @@ test('reorderTemplates 按 ids 重排且只认完整排列', () => {
 })
 
 test('probeTranscriptDir 按约定目录自动探测（含去 cli/cn 后缀变体），探不到返回 null', () => {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'areco-probe-'))
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'audicode-probe-'))
   // qoderclicn 形态：~/.qoder-cn/projects（靠去后缀变体命中）
   fs.mkdirSync(path.join(home, '.qoder-cn', 'projects'), { recursive: true })
   assert.equal(probeTranscriptDir('qoderclicn', home), path.join(home, '.qoder-cn', 'projects'))
